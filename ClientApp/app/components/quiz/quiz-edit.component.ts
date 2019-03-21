@@ -25,6 +25,8 @@ export class QuizEditComponent {
         this.quiz = <Quiz>{};
 
         var id = +this.activatedRoute.snapshot.params["id"];
+        // check if we're in edit mode or not
+        this.editMode = (this.activatedRoute)
         if (id) {
             this.editMode = true;
 

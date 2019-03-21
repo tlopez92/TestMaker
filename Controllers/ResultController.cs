@@ -3,12 +3,25 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TestMakerFreeWebApp.ViewModels;
 using System.Collections.Generic;
+using TestMakerFreeWeb.Data;
+using System.Linq;
+using Mapster;
+using TestMakerFreeWeb.Controllers;
 
 namespace TestMakerFreeWebApp.Controllers
 {
     [Route("api/[controller]")]
-    public class ResultController : Controller
+    public class ResultController : BaseApiController
     {
+        #region private fields
+        private ApplicationDbContext dbContext;
+        #endregion
+
+        #region Constructors
+        public ResultController(ApplicationDbContext context) : base(context)
+        {
+        }
+        #endregion
         #region RESTful conventions methods
         /// <summary>
         /// Retrieves the Result with the given {id}
@@ -18,7 +31,17 @@ namespace TestMakerFreeWebApp.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            return Content("Not implemented (yet)!");
+            var result = this.dbContext.Results.Where(r => r.Id == id).FirstOrDefault();
+
+            if(result == null)
+            {
+                return NotFound(new
+                {
+                    Error = String.Format("Result ID {0} has not been found", id)
+                });
+            }
+
+            return new JsonResult(result.Adapt<ResultViewModel>(), jsonSettings);
         }
 
         /// <summary>
@@ -26,9 +49,21 @@ namespace TestMakerFreeWebApp.Controllers
         /// </summary>
         /// <param name="model">The ResultViewModel containing the data to insert</param>
         [HttpPut]
-        public IActionResult Put(ResultViewModel model)
+        public IActionResult Put([FromBody]ResultViewModel model)
         {
-            throw new NotImplementedException();
+            if (model == null)
+                return new StatusCodeResult(500);
+
+            var result = model.Adapt<Result>();
+
+            result.CreatedDate = DateTime.Now;
+            result.LastModifiedDate = result.CreatedDate;
+
+            this.dbContext.Results.Add(result);
+
+            this.dbContext.SaveChanges();
+
+            return new JsonResult(result.Adapt<ResultViewModel>(), jsonSettings);
         }
 
         /// <summary>
@@ -36,9 +71,32 @@ namespace TestMakerFreeWebApp.Controllers
         /// </summary>
         /// <param name="model">The ResultViewModel containing the data to update</param>
         [HttpPost]
-        public IActionResult Post(ResultViewModel model)
+        public IActionResult Post([FromBody]ResultViewModel model)
         {
-            throw new NotImplementedException();
+            if (model == null)
+                return new StatusCodeResult(500);
+
+            var result = this.dbContext.Results.Where(r => r.Id == model.Id).FirstOrDefault();
+
+            if(result == null)
+            {
+                return NotFound(new
+                {
+                    Error = String.Format("Result ID {0} has not been found", model.Id)
+                });
+            }
+
+            result.QuizId = model.QuizId;
+            result.Text = model.Text;
+            result.MinValue = model.MinValue;
+            result.MaxValue = model.MaxValue;
+            result.Notes = model.Notes;
+
+            result.LastModifiedDate = DateTime.Now;
+
+            this.dbContext.SaveChanges();
+
+            return new JsonResult(result.Adapt<ResultViewModel>(), jsonSettings);
         }
 
         /// <summary>
@@ -48,7 +106,21 @@ namespace TestMakerFreeWebApp.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            throw new NotImplementedException();
+            var result = this.dbContext.Results.Where(r => r.Id == id).FirstOrDefault();
+
+            if(result == null)
+            {
+                return NotFound(new
+                {
+                    Error = String.Format("Result ID {0} has not been found", id)
+                });
+            }
+
+            this.dbContext.Results.Remove(result);
+
+            this.dbContext.SaveChanges();
+
+            return new OkResult();
         }
         #endregion
 
@@ -56,38 +128,10 @@ namespace TestMakerFreeWebApp.Controllers
         [HttpGet("All/{quizId}")]
         public IActionResult All(int quizId)
         {
-            var sampleResults = new List<ResultViewModel>();
+            var results = this.dbContext.Results.Where(r => r.QuizId == quizId).ToArray();
 
-            // add a first sample result
-            sampleResults.Add(new ResultViewModel()
-            {
-                Id = 1,
-                QuizId = quizId,
-                Text = "What do you value most in your life?",
-                CreatedDate = DateTime.Now,
-                LastModifiedDate = DateTime.Now
-            });
-
-            // add a bunch of other sample results
-            for (int i = 2; i <= 5; i++)
-            {
-                sampleResults.Add(new ResultViewModel()
-                {
-                    Id = i,
-                    QuizId = quizId,
-                    Text = String.Format("Sample Question {0}", i),
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now
-                });
-            }
-
-            // output the result in JSON format
             return new JsonResult(
-                sampleResults,
-                new JsonSerializerSettings()
-                {
-                    Formatting = Formatting.Indented
-                });
+            results.Adapt<ResultViewModel[]>(), jsonSettings);
         }
     }
 }
