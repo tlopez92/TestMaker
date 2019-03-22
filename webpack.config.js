@@ -20,7 +20,18 @@ module.exports = (env) => {
                 { test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/, include: /ClientApp/, use: isDevBuild ? ['awesome-typescript-loader?silent=true', 'angular2-template-loader'] : '@ngtools/webpack' },
                 { test: /\.html$/, use: 'html-loader?minimize=false' },
                 { test: /\.css$/, use: [ 'to-string-loader', isDevBuild ? 'css-loader' : 'css-loader?minimize' ] },
-                { test: /\.(png|jpg|jpeg|gif|svg)$/, use: 'url-loader?limit=25000' }
+                { test: /\.(png|jpg|jpeg|gif|svg)$/, use: 'url-loader?limit=25000' },
+                { test: /\.less$/,
+                    use: [ {
+                        loader: "styler-loader" // creates style nodes from JS strings
+                    },
+                    {
+                        loader: "css-loader"
+                    },
+                    {
+                        loader: "less-loader"
+                    }]
+                }
             ]
         },
         plugins: [new CheckerPlugin()]
