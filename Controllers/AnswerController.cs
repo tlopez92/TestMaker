@@ -14,7 +14,6 @@ namespace TestMakerFreeWebApp.Controllers
     public class AnswerController : BaseApiController
     {
         #region private fields
-        private ApplicationDbContext dbContext;
         #endregion
 
         #region Constructor

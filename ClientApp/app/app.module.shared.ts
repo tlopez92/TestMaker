@@ -13,8 +13,12 @@ import { LoginComponent } from './components/login/login.component';
 import { AboutComponent } from './components/about/about.component';
 import { QuizEditComponent } from './components/quiz/quiz-edit.component';
 import { QuestionListComponent } from './components/question/question-list.component';
-import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.component'
 import { QuestionEditComponent } from './components/question/question-edit.component';
+import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.component';
+import { AnswerListComponent } from './components/answer/answer-list.component';
+import { AnswerEditComponent } from './components/answer/answer-edit.component';
+import { ResultListComponent } from './components/result/result-list.component';
+import { ResultEditComponent } from './components/result/result-edit.component';
 
 
 
@@ -29,6 +33,11 @@ import { QuestionEditComponent } from './components/question/question-edit.compo
         LoginComponent,
         QuizEditComponent,
         QuestionListComponent,
+        QuestionEditComponent,
+        AnswerListComponent,
+        AnswerEditComponent,
+        ResultListComponent,
+        ResultEditComponent,
         PageNotFoundComponent
     ],
     imports: [
@@ -43,6 +52,10 @@ import { QuestionEditComponent } from './components/question/question-edit.compo
             { path: 'quiz/:id', component: QuizComponent },
             { path: 'question/create/:id', component: QuestionEditComponent },
             { path: 'question/edit/:id' , component: QuestionEditComponent },
+            { path: 'answer/create/:id', component: AnswerEditComponent },
+            { path: 'answer/edit/:id', component: AnswerEditComponent },
+            { path: 'result/create/:id', component: ResultEditComponent },
+            { path: 'result/edit/:id', component: ResultEditComponent},
             { path: 'about', component: AboutComponent },
             { path: 'login', component: LoginComponent },
             { path: '**', component: PageNotFoundComponent }

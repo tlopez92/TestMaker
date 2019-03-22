@@ -3,18 +3,18 @@ import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 
 @Component({
-    selector: "question-list",
-    templateUrl: './question-list.component.html',
-    styleUrls: ['./question-list.component.css']
+    selector: "result-list",
+    templateUrl: './result-list.component.html',
+    styleUrls: ['./result-list.component.css']
     })
 
-export class QuestionListComponent implements OnChanges {
+export class ResultListComponent implements OnChanges {
     @Input() quiz: Quiz;
-    questions: Question[];
+    results: Result[];
     title: string;
 
     constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router) {
-        this.questions = [];
+        this.results = [];
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -31,29 +31,29 @@ export class QuestionListComponent implements OnChanges {
     }
 
     loadData() {
-        var url = this.baseUrl + "api/question/All/" + this.quiz.Id;
-        this.http.get<Question[]>(url).subscribe(res => {
-            this.questions = res;
+        var url = this.baseUrl + "api/result/All/" + this.quiz.Id;
+        this.http.get<Result[]>(url).subscribe(res => {
+            this.results = res;
         }, error => console.error(error));
     }
 
     onCreate() {
-        this.router.navigate(["/question/create", this.quiz.Id]);
+        this.router.navigate(["/result/create", this.quiz.Id]);
     }
 
-    onEdit(question: Question) {
-        this.router.navigate(["/question/edit", question.Id]);
+    onEdit(result: Result) {
+        this.router.navigate(["/result/edit", result.Id]);
     }
 
-    onDelete(question: Question) {
-        if (confirm("Do you really want to delete this question?")) {
-            var url = this.baseUrl + "api/question/" + question.Id;
+    onDelete(result: Result) {
+        if (confirm("Do you really want to delete this result?")) {
+            var url = this.baseUrl + "api/result/" + result.Id;
             this.http
                 .delete(url)
                 .subscribe(res => {
-                    console.log("Question " + question.Id + " has been deleted.");
+                    console.log("Result " + result.Id + " has been deleted.");
 
-                    // refresh the question list
+                    // refresh the result list
                     this.loadData();
                 }, error => console.log(error));
         }

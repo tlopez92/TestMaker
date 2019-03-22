@@ -14,7 +14,6 @@ namespace TestMakerFreeWebApp.Controllers
     public class QuizController : BaseApiController
     {
         #region Private Fields
-        private ApplicationDbContext dbContext;
         #endregion
 
         #region Constructor
@@ -167,11 +166,21 @@ namespace TestMakerFreeWebApp.Controllers
         [HttpGet("Latest/{num:int?}")]
         public IActionResult Latest(int num = 10)
         {
-            var latest = dbContext.Quizzes
-                .OrderByDescending(q => q.CreatedDate)
-                .Take(num)
-                .ToArray();
-            return new JsonResult(latest.Adapt<QuizViewModel[]>(), jsonSettings);
+            try
+            {
+                var latest = dbContext.Quizzes
+                    .OrderByDescending(q => q.CreatedDate)
+                    .Take(num)
+                    .ToArray();
+
+                return new JsonResult(latest.Adapt<QuizViewModel[]>(), jsonSettings);
+            }
+            catch(Exception ex)
+            {
+                var x = ex.InnerException.Message;
+                throw;
+            }
+
         }
 
         /// <summary>

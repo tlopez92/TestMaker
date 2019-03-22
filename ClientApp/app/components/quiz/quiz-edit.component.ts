@@ -26,7 +26,7 @@ export class QuizEditComponent {
 
         var id = +this.activatedRoute.snapshot.params["id"];
         // check if we're in edit mode or not
-        this.editMode = (this.activatedRoute)
+        this.editMode = (this.activatedRoute.snapshot.url[1].path === "edit");
         if (id) {
             this.editMode = true;
 

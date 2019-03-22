@@ -51,6 +51,16 @@ export class QuestionEditComponent {
                     this.router.navigate(["quiz/edit", v.QuizId]);
                 }, error => console.log(error));
         }
+
+
+        else {
+            this.http.put<Question>(url, question)
+                .subscribe(res => {
+                    var v = res;
+                    console.log("Question " + v.Id + " has been created.");
+                    this.router.navigate(["quiz/edit", v.QuizId]);
+                }, error => console.log(error));
+        }
     }
 
     onBack() {
